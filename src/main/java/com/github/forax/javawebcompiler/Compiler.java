@@ -54,14 +54,17 @@ public class Compiler {
 
   private static List<Diagnostic> compilationResultHandler(CompilerResult compilerResult){
     var result = new ArrayList<Diagnostic>();
-    for (var diagnostic : compilerResult.diagnostics.getDiagnostics()) {
-      result.add(new Diagnostic(
-              diagnostic.getLineNumber(),
-              diagnostic.getColumnNumber(),
-              diagnostic.getMessage(Locale.ENGLISH),
-              diagnostic.getKind().name()
-      ));
+    if(! compilerResult.success){
+      for (var diagnostic : compilerResult.diagnostics.getDiagnostics()) {
+        result.add(new Diagnostic(
+                diagnostic.getLineNumber(),
+                diagnostic.getColumnNumber(),
+                diagnostic.getMessage(Locale.FRANCE),
+                diagnostic.getKind().name()
+        ));
+      }
     }
+
     return result;
   }
 }
