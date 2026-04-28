@@ -81,11 +81,11 @@ function JavaEditor() {
         return;
       }
 
-      setOutput(errors.map(e => `✕ Ligne ${e.line}, col ${e.column} — ${e.message}`).join('\n'));
+      setOutput(errors.map(e => `[${e.kind}] Ligne ${e.line}, col ${e.column} — ${e.message}`).join('\n'));
 
       // Map Java diagnostics to Monaco markers
       const markers = errors.map(err => ({
-        severity: monaco.MarkerSeverity.Error,
+        severity: err.kind === 'ERROR' ? monaco.MarkerSeverity.Error : monaco.MarkerSeverity.Warning,
         startLineNumber: err.line,
         startColumn: err.column,
         endLineNumber: err.line,

@@ -14,7 +14,7 @@ public class Compiler {
   private Compiler(){
       throw new AssertionError("no instances");
   }
-  record Diagnostic(long line, long column, String message) {}
+  record Diagnostic(long line, long column, String message, String kind) {}
   private record CompilerResult(boolean success, DiagnosticCollector<Object> diagnostics, MemoryClassLoader loader) {}
   record CompileRequest(String code){
     CompileRequest {
@@ -54,10 +54,13 @@ public class Compiler {
 
   private static List<Diagnostic> compilationResultHandler(CompilerResult compilerResult){
     var result = new ArrayList<Diagnostic>();
-    if (!compilerResult.success) {
-      for (var diagnostic : compilerResult.diagnostics.getDiagnostics()) {
-        result.add(new Diagnostic(diagnostic.getLineNumber(), diagnostic.getColumnNumber(), diagnostic.getMessage(Locale.FRANCE)));
-      }
+    for (var diagnostic : compilerResult.diagnostics.getDiagnostics()) {
+      result.add(new Diagnostic(
+              diagnostic.getLineNumber(),
+              diagnostic.getColumnNumber(),
+              diagnostic.getMessage(Locale.ENGLISH),
+              diagnostic.getKind().name()
+      ));
     }
     return result;
   }
