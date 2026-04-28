@@ -142,4 +142,19 @@ public final class ApplicationTest {
     assertFalse(diagnostics.isEmpty());
     assertEquals(2, diagnostics.size());
   }
+
+  @Test
+  public void warningOnlyCodeIsSuccess(){
+    var code = """
+        import java.util.ArrayList;
+        public class Main {
+            public static void main(String[] args) {
+                ArrayList list = new ArrayList();
+            }
+        }
+        """;
+    var loader = new MemoryClassLoader();
+    var diagnostic = Compiler.compileInMemory("Main", code, loader);
+    assertTrue(diagnostic.isEmpty());
+  }
 }
