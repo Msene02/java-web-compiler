@@ -17,7 +17,7 @@ public class Runner {
     Objects.requireNonNull(loader);
     Objects.requireNonNull(diagnostics);
 
-    boolean hasErrors = diagnostics.stream().anyMatch(d -> d.kind().equals("ERROR"));
+    var hasErrors = diagnostics.stream().anyMatch(d -> d.kind().equals("ERROR"));
 
     if (hasErrors) {
       return new RunResult("", diagnostics);
@@ -34,7 +34,6 @@ public class Runner {
         System.setOut(old);
     }
 
-    //return new RunResult(out.toString(), List.of());
     return new RunResult(out.toString(), diagnostics);
   }
 }
