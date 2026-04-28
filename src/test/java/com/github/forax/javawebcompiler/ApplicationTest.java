@@ -14,7 +14,7 @@ public final class ApplicationTest {
         }
       }
       """;
-    var result = Application.compileInMemory("Main", code);
+    var result = Compiler.compileInMemory("Main", code);
     assertTrue(result.isEmpty());
   }
 
