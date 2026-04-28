@@ -97,7 +97,7 @@ function JavaEditor() {
   }
 
   function downloadCode() {
-    if (!editorInstanceRef.current) return;
+    if (!editorInstanceRef.current){ return; } 
     const code = editorInstanceRef.current.getValue();
     const blob = new Blob([code], { type: 'text/x-java-source' });
     const url = URL.createObjectURL(blob);
