@@ -126,6 +126,17 @@ public final class ApplicationTest {
 
     assertTrue(diagnostics.isEmpty());
   }
-
-
+  @Test
+  public void compileWrongCodeWithMultipleErrors(){
+    var code = """
+        public class Main {
+            System.out.println("Hello");
+            int a = ""; 
+        }
+        """;
+    var loader = new MemoryClassLoader();
+    var diagnostics = Compiler.compileInMemory("Main", code,loader);
+    assertFalse(diagnostics.isEmpty());
+    assertEquals(2, diagnostics.size());
+  }
 }
