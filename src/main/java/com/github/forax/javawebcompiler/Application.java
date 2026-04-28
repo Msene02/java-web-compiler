@@ -8,6 +8,11 @@ import tools.jackson.databind.ObjectMapper;
 import javax.tools.ToolProvider;
 
 public class Application {
+    private record CompileRequest(String code){
+        private CompileRequest {
+            Objects.requireNonNull(code);
+        }
+    }
 
   static void main(String[] args) {
     var app = JExpress.express();
@@ -21,7 +26,7 @@ public class Application {
       try {
         var body = req.bodyText();
         var compileRequest = objectMapper.readValue(body, CompileRequest.class);
-        var sourceCode = Compiler.compileRequest.code;
+        var sourceCode = compileRequest.code;
         var diagnostics = Compiler.compileInMemory("Main", sourceCode);
         res.send(objectMapper.writeValueAsString(diagnostics));
       } catch (Exception e) {

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class Compiler {
-    private record Diagnostic(long line, long column, String message) {}
+    record Diagnostic(long line, long column, String message) {}
     private record CompilerResult(boolean success, DiagnosticCollector<Object> diagnostics) {}
 
     // Package private for testing
