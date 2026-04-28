@@ -14,7 +14,7 @@ public final class ApplicationTest {
         }
       }
       """;
-    var result = Application.compileInMemory("Main", code);
+    var result = Compiler.compileInMemory("Main", code);
     assertTrue(result.isEmpty());
   }
 
@@ -27,7 +27,7 @@ public final class ApplicationTest {
             }
         }
         """;
-    var diagnostics = Application.compileInMemory("Main", source);
+    var diagnostics = Compiler.compileInMemory("Main", source);
     assertFalse(diagnostics.isEmpty());
     var first = diagnostics.getFirst();
     assertTrue(first.line() > 0);
