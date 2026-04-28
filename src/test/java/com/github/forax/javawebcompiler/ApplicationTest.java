@@ -2,6 +2,9 @@ package com.github.forax.javawebcompiler;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public final class ApplicationTest {
@@ -46,15 +49,15 @@ public final class ApplicationTest {
         }
       """;
       var loader = new MemoryClassLoader();
-      Compiler.compileInMemory("Main", code, loader);
-      var output = Runner.runFromMemory("Main", loader);
-      assertEquals("Hello\n", output);
-    }
+      var diag = Compiler.compileInMemory("Main", code, loader);
+      var result = Runner.runFromMemory("Main", loader, diag);
+      assertEquals(new Runner.RunResult("Hello\n", List.of()), result);
+  }
 
     @Test
     public void runWithNoCompiledCode() {
       var loader = new MemoryClassLoader();
-      assertThrows(ClassNotFoundException.class, () -> Runner.runFromMemory("Main", loader));
+      assertThrows(ClassNotFoundException.class, () -> Runner.runFromMemory("Main", loader, List.of()));
     }
 
     @Test
@@ -68,9 +71,9 @@ public final class ApplicationTest {
         }
       """;
       var loader = new MemoryClassLoader();
-      Compiler.compileInMemory("Main", code, loader);
-      var output = Runner.runFromMemory("Main", loader);
-      assertEquals("line1\nline2\n", output);
+      var diag = Compiler.compileInMemory("Main", code, loader);
+      var result = Runner.runFromMemory("Main", loader, diag);
+      assertEquals(new Runner.RunResult("line1\nline2\n", List.of()), result);
     }
 
     @Test
@@ -81,9 +84,9 @@ public final class ApplicationTest {
         }
       """;
       var loader = new MemoryClassLoader();
-      Compiler.compileInMemory("Main", code, loader);
-      var output = Runner.runFromMemory("Main", loader);
-      assertEquals("", output);
+      var diag = Compiler.compileInMemory("Main", code, loader);
+      var result = Runner.runFromMemory("Main", loader, diag);
+      assertEquals(new Runner.RunResult("", List.of()), result);
     }
 
   @Test

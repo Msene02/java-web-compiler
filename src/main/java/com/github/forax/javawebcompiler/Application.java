@@ -47,17 +47,15 @@ public class Application {
         var className = classNameExtractor(sourceCode);
         var newLoader = new MemoryClassLoader();
         var diagnostics = Compiler.compileInMemory(className, sourceCode, newLoader);
-        if (!diagnostics.isEmpty()) {
-          throw new Error("TODO Marko");
-        }
-        var output = Runner.runFromMemory(className, newLoader);
-        res.send(objectMapper.writeValueAsString(Map.of("output", output)));
+        var runTask = Runner.runFromMemory(className, newLoader, diagnostics);
+        var result = objectMapper.writeValueAsString(runTask);
+        res.send(result);
       } catch (Exception e) {
         res.status(500).json("""
           {"error": "Internal Server Error"}
         """);
-        }
-      });
+      }
+    });
     app.listen(8080);
     System.out.println("Web site on http://localhost:8080/index.html");
   }

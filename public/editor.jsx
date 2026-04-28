@@ -51,17 +51,50 @@ function JavaEditor() {
      return response.json();
    }
 
- async function runCode() {
-   try {
-     const code = editorInstanceRef.current.getValue();
-     const response = await fetch('/run', { method: 'POST' });
-     if (!response.ok) throw new Error(response.statusText);
-     const data = await response.json();
-     setOutput(data.output);
-   } catch (err) {
-     console.error('Run failed:', err);
-   }
- }
+  async function fetchRun(currentCode) {
+   const response = await fetch('/run', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ code: currentCode })
+    });
+
+    if (!response.ok) throw new Error(response.statusText);
+    return response.json();
+  }
+
+  async function runCode() {
+    if (!editorInstanceRef.current || !monacoRef.current) return;
+
+    const currentCode = editorInstanceRef.current.getValue();
+    const monaco = monacoRef.current;
+    const model = editorInstanceRef.current.getModel();
+
+    try {
+      const data = await fetchRun(currentCode);
+
+      if (data.errors.length === 0) {
+        monaco.editor.setModelMarkers(model, 'java-compiler', []);
+      }
+
+      // Map Java diagnostics to Monaco markers
+      const markers = data.errors.map(err => ({
+        severity: monaco.MarkerSeverity.Error,
+        startLineNumber: err.line,
+        startColumn: err.column,
+        endLineNumber: err.line,
+        endColumn: err.column + 1, // Highlight the character token
+        message: err.message
+      }));
+
+      // Apply red squiggles
+      monaco.editor.setModelMarkers(model, 'java-compiler', markers);
+      setOutput(data.output);
+    } catch (err) {
+      console.error('Compilation fetch failed', err);
+    }
+  }
 
   async function compileCode() {
     if (!editorInstanceRef.current || !monacoRef.current) return;
