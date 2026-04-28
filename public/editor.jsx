@@ -76,11 +76,14 @@ function JavaEditor() {
 
       if (data.errors.length === 0) {
         monaco.editor.setModelMarkers(model, 'java-compiler', []);
+        setOutput(data.output);
+      } else {
+        setOutput(data.errors.map(e => `[${e.kind}] line ${e.line}, col ${e.column} — ${e.message}`).join('\n'));
       }
 
       // Map Java diagnostics to Monaco markers
       const markers = data.errors.map(err => ({
-        severity: monaco.MarkerSeverity.Error,
+        severity: err.kind === 'ERROR' ? monaco.MarkerSeverity.Error : monaco.MarkerSeverity.Warning,
         startLineNumber: err.line,
         startColumn: err.column,
         endLineNumber: err.line,
@@ -90,7 +93,6 @@ function JavaEditor() {
 
       // Apply red squiggles
       monaco.editor.setModelMarkers(model, 'java-compiler', markers);
-      setOutput(data.output);
     } catch (err) {
       console.error('Compilation fetch failed', err);
     }

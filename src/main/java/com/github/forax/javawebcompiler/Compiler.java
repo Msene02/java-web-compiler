@@ -15,7 +15,7 @@ public class Compiler {
       throw new AssertionError("no instances");
   }
   record Diagnostic(long line, long column, String message, String kind) {}
-  private record CompilerResult(boolean success, DiagnosticCollector<Object> diagnostics, MemoryClassLoader loader) {}
+  private record CompilerResult(DiagnosticCollector<Object> diagnostics, MemoryClassLoader loader) {}
   record CompileRequest(String code){
     CompileRequest {
       Objects.requireNonNull(code);
@@ -46,15 +46,14 @@ public class Compiler {
     };
 
     var compilationUnits = List.of(file);
-    var task = compiler.getTask(null, fileManager, diagnostics, null, null, compilationUnits);
+    var task = compiler.getTask(null, fileManager, diagnostics, List.of("-Xlint:all"), null, compilationUnits);
 
-    var success = task.call();
-    return new CompilerResult(success, diagnostics, loader);
+    task.call();
+    return new CompilerResult(diagnostics, loader);
   }
 
   private static List<Diagnostic> compilationResultHandler(CompilerResult compilerResult){
     var result = new ArrayList<Diagnostic>();
-    if (!compilerResult.success) {
       for (var diagnostic : compilerResult.diagnostics.getDiagnostics()) {
         result.add(new Diagnostic(
                 diagnostic.getLineNumber(),
@@ -63,7 +62,6 @@ public class Compiler {
                 diagnostic.getKind().name()
         ));
       }
-    }
 
     return result;
   }
