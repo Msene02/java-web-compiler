@@ -9,6 +9,12 @@ import javax.tools.ToolProvider;
 
 public class Application {
 
+  private record CompileRequest(String code){
+    private CompileRequest {
+      Objects.requireNonNull(code);
+    }
+  }
+
   private record Diagnostic(long line, long column, String message) {} 
 
   static void main(String[] args) {
@@ -22,9 +28,8 @@ public class Application {
     app.post("/compile", (req, res) -> {
       try {
         var body = req.bodyText();
-        var tree = objectMapper.readTree(body);
-        var sourceCode = tree.get("code").asString();
-
+        var compileRequest = objectMapper.readValue(body, CompileRequest.class);
+        var sourceCode = compileRequest.code;
         var diagnostics = compileInMemory("Main", sourceCode);
         res.send(objectMapper.writeValueAsString(diagnostics));
       } catch (Exception e) {
