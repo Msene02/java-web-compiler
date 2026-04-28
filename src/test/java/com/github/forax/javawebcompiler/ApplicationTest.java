@@ -49,8 +49,8 @@ public final class ApplicationTest {
         }
       """;
       var loader = new MemoryClassLoader();
-      var diag = Compiler.compileInMemory("Main", code, loader);
-      var result = Runner.runFromMemory("Main", loader, diag);
+      var diagnostics = Compiler.compileInMemory("Main", code, loader);
+      var result = Runner.runFromMemory("Main", loader, diagnostics);
       assertEquals(new Runner.RunResult("Hello\n", List.of()), result);
   }
 
@@ -71,8 +71,8 @@ public final class ApplicationTest {
         }
       """;
       var loader = new MemoryClassLoader();
-      var diag = Compiler.compileInMemory("Main", code, loader);
-      var result = Runner.runFromMemory("Main", loader, diag);
+      var diagnostics = Compiler.compileInMemory("Main", code, loader);
+      var result = Runner.runFromMemory("Main", loader, diagnostics);
       assertEquals(new Runner.RunResult("line1\nline2\n", List.of()), result);
     }
 
@@ -84,8 +84,8 @@ public final class ApplicationTest {
         }
       """;
       var loader = new MemoryClassLoader();
-      var diag = Compiler.compileInMemory("Main", code, loader);
-      var result = Runner.runFromMemory("Main", loader, diag);
+      var diagnostics = Compiler.compileInMemory("Main", code, loader);
+      var result = Runner.runFromMemory("Main", loader, diagnostics);
       assertEquals(new Runner.RunResult("", List.of()), result);
     }
 
@@ -134,7 +134,7 @@ public final class ApplicationTest {
     var code = """
         public class Main {
             System.out.println("Hello");
-            int a = ""; 
+            int a = "";
         }
         """;
     var loader = new MemoryClassLoader();

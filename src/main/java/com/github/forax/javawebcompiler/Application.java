@@ -47,8 +47,8 @@ public class Application {
         var className = classNameExtractor(sourceCode);
         var newLoader = new MemoryClassLoader();
         var diagnostics = Compiler.compileInMemory(className, sourceCode, newLoader);
-        var runTask = Runner.runFromMemory(className, newLoader, diagnostics);
-        var result = objectMapper.writeValueAsString(runTask);
+        var runResult = Runner.runFromMemory(className, newLoader, diagnostics);
+        var result = objectMapper.writeValueAsString(runResult);
         res.send(result);
       } catch (Exception e) {
         res.status(500).json("""
