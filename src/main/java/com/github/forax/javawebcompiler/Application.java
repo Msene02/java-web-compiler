@@ -9,6 +9,8 @@ import javax.tools.ToolProvider;
 
 public class Application {
 
+  private record Diagnostic(long line, long column, String message) {} 
+
   static void main(String[] args) {
     var app = JExpress.express();
 
@@ -36,7 +38,7 @@ public class Application {
     System.out.println("Web site on http://localhost:8080/index.html");
   }
 
-  private static List<Map<String, Object>> compileInMemory(String className, String sourceCode) {
+  private static List<Diagnostic> compileInMemory(String className, String sourceCode) {
     var compiler = ToolProvider.getSystemJavaCompiler();
     var diagnostics = new DiagnosticCollector<>();
 
@@ -53,15 +55,14 @@ public class Application {
     var task = compiler.getTask(null, null, diagnostics, null, null, compilationUnits);
 
     var success = task.call();
-    var result = new ArrayList<Map<String, Object>>();
+    var result = new ArrayList<Diagnostic>();
 
     if (!success) {
       for (var diagnostic : diagnostics.getDiagnostics()) {
-        var error = new HashMap<String, Object>();
-        error.put("line", diagnostic.getLineNumber());
-        error.put("column", diagnostic.getColumnNumber());
-        error.put("message", diagnostic.getMessage(Locale.ENGLISH));
-        result.add(error);
+        result.add(new Diagnostic(
+            diagnostic.getLineNumber(),
+            diagnostic.getColumnNumber(),
+            diagnostic.getMessage(Locale.FRANCE)));
       }
     }
     return result;
